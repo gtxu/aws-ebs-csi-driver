@@ -41,7 +41,7 @@ sidecars:
     image:
       pullPolicy: IfNotPresent
       repository: k8s.gcr.io/sig-storage/livenessprobe
-      tag: "v2.2.0"
+      tag: "v2.4.0"
     resources: {}
   resizer:
     env: []
@@ -133,6 +133,9 @@ controller:
   #    topologyKey: kubernetes.io/hostname
   #    whenUnsatisfiable: ScheduleAnyway
   topologySpreadConstraints: []
+  securityContext: {}
+  #  AWS EKS /var/run/secrets/eks.amazonaws.com/serviceaccount/token FS group is nogroup (65534) - required for Kubernetes 1.18.x and below
+  #  fsGroup: 65534
 
 node:
   env: []
