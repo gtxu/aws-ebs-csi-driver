@@ -89,13 +89,6 @@ func newNodeService(driverOptions *DriverOptions) nodeService {
 		panic(err)
 	}
 
-	if driverOptions.startupTaintRemoval {
-		err := cloud.RemoveNodeTaint(cloud.DefaultKubernetesAPIClient, AgentNotReadyNodeTaintKey)
-		if err != nil {
-			klog.InfoS("Node agent-not-ready taint error", "error", err)
-		}
-	}
-
 	return nodeService{
 		metadata:         metadata,
 		mounter:          nodeMounter,
@@ -556,6 +549,13 @@ func (d *nodeService) NodeGetInfo(ctx context.Context, req *csi.NodeGetInfoReque
 	}
 
 	outpostArn := d.metadata.GetOutpostArn()
+
+	if d.driverOptions.startupTaintRemoval {
+		err := cloud.RemoveNodeTaint(cloud.DefaultKubernetesAPIClient, AgentNotReadyNodeTaintKey)
+		if err != nil {
+			klog.InfoS("Node agent-not-ready taint error", "error", err)
+		}
+	}
 
 	// to my surprise ARN's string representation is not empty for empty ARN
 	if len(outpostArn.Resource) > 0 {

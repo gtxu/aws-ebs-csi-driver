@@ -19,7 +19,7 @@ type JSONPatch struct {
 }
 
 // RemoveNodeTaint() patched the node, removes the taint that match NodeTaintKey
-func RemoveNodeTaint(k8sAPIClient KubernetesAPIClient, NodeTaintKey string) error {
+func RemoveNodeTaint(k8sAPIClient KubernetesAPIClient, nodeTaintKey string) error {
 	nodeName := os.Getenv("CSI_NODE_NAME")
 	if nodeName == "" {
 		return fmt.Errorf("CSI_NODE_NAME env var not set")
@@ -38,7 +38,7 @@ func RemoveNodeTaint(k8sAPIClient KubernetesAPIClient, NodeTaintKey string) erro
 	var taints []corev1.Taint
 	hasTaint := false
 	for _, taint := range node.Spec.Taints {
-		if taint.Key != NodeTaintKey {
+		if taint.Key != nodeTaintKey {
 			taints = append(taints, taint)
 		} else {
 			hasTaint = true
@@ -47,7 +47,7 @@ func RemoveNodeTaint(k8sAPIClient KubernetesAPIClient, NodeTaintKey string) erro
 	}
 
 	if !hasTaint {
-		return fmt.Errorf("could not find node taint, key: %v, node: %v", NodeTaintKey, nodeName)
+		return fmt.Errorf("could not find node taint, key: %v, node: %v", nodeTaintKey, nodeName)
 	}
 
 	createStatusAndNodePatch := []JSONPatch{
@@ -72,6 +72,6 @@ func RemoveNodeTaint(k8sAPIClient KubernetesAPIClient, NodeTaintKey string) erro
 	if err != nil {
 		return fmt.Errorf("failed to patch node when removing taint: error %w", err)
 	}
-	klog.InfoS("Successfully removed taint", "key", NodeTaintKey, "node", nodeName)
+	klog.InfoS("Successfully removed taint", "key", nodeTaintKey, "node", nodeName)
 	return nil
 }

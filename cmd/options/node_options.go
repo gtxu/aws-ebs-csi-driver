@@ -39,5 +39,5 @@ type NodeOptions struct {
 
 func (o *NodeOptions) AddFlags(fs *flag.FlagSet) {
 	fs.Int64Var(&o.VolumeAttachLimit, "volume-attach-limit", -1, "Value for the maximum number of volumes attachable per node. If specified, the limit applies to all nodes. If not specified, the value is approximated from the instance type.")
-	fs.BoolVar(&o.StartupTaintRemoval, "start-up-taint", false, "To enable the node service remove node-ready taint after startup (default to false).")
+	fs.BoolVar(&o.StartupTaintRemoval, "remove-not-ready-taints", false, "To enable the node service remove node-ready taint after startup (default to false).")
 }
